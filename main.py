@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Query
 from typing import Optional
 from pydantic import BaseModel
 
@@ -44,3 +44,11 @@ async def create_item(item: Item):
         price_with_tax = item.price + item.tax
         item_dict.update({"price with tax": price_with_tax})
     return item_dict
+
+
+@app.get("/item")
+async def read_item(q: Optional[str] = Query(None, min_length=3, max_length=10, regex="ppp")):
+    result = {"items": [{"name": "bar"}, {"name": "foo"}]}
+    if q:
+        result.update({"q": q})
+    return result
