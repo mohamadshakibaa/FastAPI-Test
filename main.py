@@ -46,8 +46,8 @@ async def create_item(item: Item):
     return item_dict
 
 
-@app.get("/item")                          #Add default Query                 or    regex= necessary value
-async def read_item(q: Optional[str] = Query('Default value', min_length=3, max_length=15)):
+@app.get("/item")                          #with ... you show that this q is requirement
+async def read_item(q: Optional[str] = Query(... , min_length=3, max_length=15)):
     result = {"items": [{"name": "bar"}, {"name": "foo"}]}
     if q:
         result.update({"q": q})
