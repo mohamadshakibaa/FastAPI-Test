@@ -64,3 +64,11 @@ async def read_item(
     if q:
         result.update({"q": q})
     return result
+
+
+
+@app.get("/items_hidden") # Add hidden query
+async def hidden_query_route(hidden_query: Optional[str] = None):
+    if hidden_query:
+        return {"hidden query": hidden_query}
+    return {"not found"}
