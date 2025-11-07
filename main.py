@@ -5,6 +5,7 @@ from pydantic import BaseModel
 
 app = FastAPI()
 
+
 @app.get("/users")
 async def get_users():
     return "Hello World"
@@ -12,21 +13,28 @@ async def get_users():
 
 fake_items = [{"item_name": "Foo"}, {"item_name": "Baz"}, {"item_name": "Bar"}]
 
+
 @app.get("/items")
 async def list_items(skip: int = 0, limit: int = 10):
-    return fake_items[skip: skip + limit] 
+    return fake_items[skip : skip + limit]
 
 
 @app.get("/items/{item_id}")
-async def get_item(item_id: int, question: str, q: Optional[str] = None, short: Optional[bool] = False):
-    
+async def get_item(
+    item_id: int, question: str, q: Optional[str] = None, short: Optional[bool] = False
+):
+
     item = {"item_id": item_id, "question": question}
-    
+
     if q:
         item.update({"q": q})
     if not short:
-        item.update({"description": "Lorem Ipsum is a dummy text commonly used in the printing and typesetting "})
-    
+        item.update(
+            {
+                "description": "Lorem Ipsum is a dummy text commonly used in the printing and typesetting "
+            }
+        )
+
     return item
 
 
@@ -46,8 +54,12 @@ async def create_item(item: Item):
     return item_dict
 
 
-@app.get("/item")    # List insted optional that give us many list
-async def read_item(q: list[str] = Query(... , min_length=3, max_length=15)):
+@app.get("/item")  # Add  description and title
+async def read_item(
+    q: Optional[str] = Query(
+        None, min_length=3, max_length=15, title="simple query", description="for test"
+    )
+):
     result = {"items": [{"name": "bar"}, {"name": "foo"}]}
     if q:
         result.update({"q": q})
