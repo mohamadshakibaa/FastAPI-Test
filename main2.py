@@ -27,24 +27,12 @@ async def update_item(
 
 
 
-# A port of 3 ports that you show to swagger EXAMPLE for each item
+# second port of 3 ports that you show to swagger EXAMPLE for each item
 class Item2(BaseModel):
-    name: str
-    description: str | None = None
-    price: int
-    tax: float | None = None
-
-
-    model_config = {
-        "json_schema_extra": {
-            "example": {
-                "name": "foo",
-                "description": "A very good item",
-                "price": 16,
-                "tax": 1.54,
-            }
-        }
-    }
+    name: str = Field(..., example="foo")
+    description: Optional[str] = Field(None, example="a very good item")
+    price: int = Field(..., example=19)
+    tax: Optional[float] = Field(None, example=1.5)
 
 
 @app.put("/items_ex/{item_id}")
