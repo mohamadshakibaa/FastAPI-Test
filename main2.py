@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Query, Path, Body, Cookie, Header
-from typing import Optional, Literal
+from typing import Optional, Literal, Union
 from pydantic import BaseModel, Field, EmailStr
 from uuid import UUID
 from datetime import datetime, time, timedelta
@@ -182,4 +182,27 @@ async def create_user(user_in: UserIn2):
 
 
 
+# Union
+class BaseItem(BaseModel):
+    description: str
+    type: str
+    
 
+class CarItem(BaseItem):
+    type: Literal["car"] = "car"
+    
+
+class PlaneItem(BaseItem):
+    type: Literal["plane"] = "plane"
+    size: int
+    
+
+items2 = {
+    "item1": {"description": "About beauty car", "type": "car"},
+    "item2": {"description": "lab lab lab", "type": "plane", "size": 6},
+}
+
+
+@app.get("/item_union/{item_id}", response_model=Union[CarItem, PlaneItem])
+async def read_item(item_id: Literal["item1", "item2"]):
+    return items2[item_id]
