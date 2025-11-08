@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Query, Path, Body
+from fastapi import FastAPI, Query, Path, Body, Cookie, Header
 from typing import Optional
 from pydantic import BaseModel, Field
 from uuid import UUID
@@ -68,4 +68,24 @@ async def update_item(
             "process_after": process_after,
             "start_process": start_process,
             "duration": duration
+}
+
+
+
+
+
+
+@app.get("/item_cookie")
+async def get_cookie(
+    cookie: Optional[str] = Cookie(None),
+    accept_encoding: Optional[str] = Header(None, convert_underscores=False),
+    sec_ch_ua: Optional[str] = Header(None),
+    user_agent: Optional[str] = Header(None)
+):
+    return {
+        "cookie": cookie,
+        "accept_encoding": accept_encoding,
+        "sec_ch_ua": sec_ch_ua,
+        "user_agent": user_agent
+
 }
