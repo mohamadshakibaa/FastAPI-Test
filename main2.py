@@ -1,6 +1,6 @@
 from fastapi import FastAPI, Query, Path, Body, Cookie, Header
-from typing import Optional
-from pydantic import BaseModel, Field
+from typing import Optional, Literal
+from pydantic import BaseModel, Field, EmailStr
 from uuid import UUID
 from datetime import datetime, time, timedelta
 
@@ -89,3 +89,52 @@ async def get_cookie(
         "user_agent": user_agent
 
 }
+    
+    
+    
+    
+    
+class ItemIn(BaseModel):
+    name: str
+    description: Optional[str] = None
+    price: float
+    tax: Optional[float] = 1.6
+    tags: list[str] = []
+    
+
+class User(BaseModel):
+    username: str
+    full_name: str
+    email: EmailStr
+
+class UserIn(User):
+    password: str
+    
+class UserOut(User):
+    pass
+
+
+@app.post("/items_response2", response_model= UserOut)
+async def create_user(user: UserIn):
+    return user
+
+items = {
+    "foo": {"name": "foo", "price": 15},
+    "bar": {"name": "bar", "description": "hello my beauty", "price": 11},
+    "baz": {"name": "baz", "tax": 11, "price": 30, "tags": ["water"]}
+}
+
+
+@app.get("/items1/{item_id}", response_model= ItemIn, response_model_include=["name", "description"])
+async def read_item_name(item_id: Literal["foo", "bar", "baz"]):
+    return items[item_id]
+
+
+@app.get("/items2/{item_id}", response_model= ItemIn, response_model_exclude=["tax"])
+async def read_item_name(item_id: Literal["foo", "bar", "baz"]):
+    return items[item_id]
+
+
+@app.get("/items3/{item_id}", response_model= ItemIn, response_model_exclude_unset=True)
+async def read_item_name(item_id: Literal["foo", "bar", "baz"]):
+    return items[item_id]
