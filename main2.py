@@ -141,27 +141,22 @@ async def read_item_name(item_id: Literal["foo", "bar", "baz"]):
 
 
 
-
-
-
-class UserIn2(BaseModel):
+class UserBase(BaseModel):
     username: str
+    email: EmailStr
+    full_name: str | None = None
+
+    
+class UserIn2(UserBase):
     password: str
-    email: EmailStr
-    full_name: str | None = None
+
+
+class UserOut2(UserBase):
+    pass
 
     
-class UserOut2(BaseModel):
-    username: str
-    email: EmailStr
-    full_name: str | None = None
-
-    
-class UserInDB(BaseModel):
-    username: str
+class UserInDB(UserBase):
     hashed_password: str
-    email: EmailStr
-    full_name: str | None = None
 
 
 def fake_password_hasher(raw_password: str):
@@ -180,5 +175,11 @@ def fake_save_user(user_in: UserIn2):
 async def create_user(user_in: UserIn2):
     user_saved = fake_save_user(user_in)
     return user_saved
+
+
+
+
+
+
 
 
