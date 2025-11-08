@@ -206,3 +206,25 @@ items2 = {
 @app.get("/item_union/{item_id}", response_model=Union[CarItem, PlaneItem])
 async def read_item(item_id: Literal["item1", "item2"]):
     return items2[item_id]
+
+
+
+
+# show in (get) List and Dict
+class ListItem(BaseModel):
+    name: str
+    description: str
+    
+
+list_items = [
+    {"name": "foo", "description": "There comes my hero"},
+    {"name": "bar", "description": "hello baby"}
+]
+
+@app.get("/items_list/", response_model=list[ListItem])
+async def show_list():
+    return list_items
+
+@app.get("/items_dict/", response_model=dict[str, float])
+async def reat_dict():
+    return {"name": 5, "description": 9}
