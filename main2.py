@@ -138,3 +138,47 @@ async def read_item_name(item_id: Literal["foo", "bar", "baz"]):
 @app.get("/items3/{item_id}", response_model= ItemIn, response_model_exclude_unset=True)
 async def read_item_name(item_id: Literal["foo", "bar", "baz"]):
     return items[item_id]
+
+
+
+
+
+
+class UserIn2(BaseModel):
+    username: str
+    password: str
+    email: EmailStr
+    full_name: str | None = None
+
+    
+class UserOut2(BaseModel):
+    username: str
+    email: EmailStr
+    full_name: str | None = None
+
+    
+class UserInDB(BaseModel):
+    username: str
+    hashed_password: str
+    email: EmailStr
+    full_name: str | None = None
+
+
+def fake_password_hasher(raw_password: str):
+    return f'supersecret {raw_password}'
+
+
+def fake_save_user(user_in: UserIn2):
+    hashed_password = fake_password_hasher(user_in.password)
+    user_in_db = UserInDB(**user_in.dict(), hashed_password=hashed_password)
+    print("user_in.dict", user_in.dict())
+    print("User saved")
+    return user_in_db
+
+
+@app.post("/hashed", response_model=UserOut2)
+async def create_user(user_in: UserIn2):
+    user_saved = fake_save_user(user_in)
+    return user_saved
+
+
