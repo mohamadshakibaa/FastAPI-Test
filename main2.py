@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Query, Path, Body, Cookie, Header
+from fastapi import FastAPI, Query, Path, Body, Cookie, Header, Form
 from typing import Optional, Literal, Union
 from pydantic import BaseModel, Field, EmailStr
 from uuid import UUID
@@ -228,3 +228,15 @@ async def show_list():
 @app.get("/items_dict/", response_model=dict[str, float])
 async def reat_dict():
     return {"name": 5, "description": 9}
+
+
+
+
+
+
+# Form Fields
+# this is good for HTML requests, but for using in (JSON) BODY is better
+@app.post("/items_field/")
+async def login(username: str = Form(...), password: str = Form(...)):
+    print("password:", password)
+    return {"username": username}
