@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Query, Path, Body, Cookie, Header, Form
+from fastapi import FastAPI, Query, Path, Body, Cookie, Header, Form, File, UploadFile
 from typing import Optional, Literal, Union
 from pydantic import BaseModel, Field, EmailStr
 from uuid import UUID
@@ -240,3 +240,22 @@ async def reat_dict():
 async def login(username: str = Form(...), password: str = Form(...)):
     print("password:", password)
     return {"username": username}
+
+
+
+
+
+#About upload file
+@app.post("/request_file")
+async def get_file(file: bytes = File(...)):
+    return len(file)
+
+
+@app.post("/request_file2")
+async def get_file_with_uploadfile(file: UploadFile):
+    return file.filename
+
+
+@app.post("/request_file3")
+async def get_list_file(files: list[UploadFile] = File(..., description="many list")):
+    return [file.filename for file in files]
