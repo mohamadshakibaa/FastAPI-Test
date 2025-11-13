@@ -1,4 +1,17 @@
-from fastapi import FastAPI, Query, Path, Body, Cookie, Header, Form, File, UploadFile
+from fastapi import (
+    FastAPI, 
+    Query, 
+    Path, 
+    Body, 
+    Cookie, 
+    Header, 
+    Form, 
+    File, 
+    UploadFile, 
+    HTTPException,
+    Request
+)
+from fastapi.responses import JSONResponse
 from typing import Optional, Literal, Union
 from pydantic import BaseModel, Field, EmailStr
 from uuid import UUID
@@ -259,3 +272,49 @@ async def get_file_with_uploadfile(file: UploadFile):
 @app.post("/request_file3")
 async def get_list_file(files: list[UploadFile] = File(..., description="many list")):
     return [file.filename for file in files]
+
+
+
+
+
+
+# HTTPException 
+items = {"foo": "the perfect"}
+
+
+@app.get("/item_handeling_error/{item_name}")
+async def handelling_error(item_name: str):
+    if item_name not in items:
+        raise HTTPException(
+            status_code=404,
+            detail="incorrect name",
+            headers={"X-error": "hi"}, # it must be a Dict
+        )
+    return {"item": items[item_name]}
+
+
+
+
+# Custom Exception + Handler
+class UnicornException(Exception):
+    def __init__(self, name):
+        self.name = name
+        
+        
+@app.exception_handler(UnicornException)
+async def exception_handler(request: Request, exc: UnicornException):
+    return JSONResponse(
+        status_code=418,
+        content={
+            "path": str(request.url),
+            "method": request.method,
+            "message": f"Nope! it not {exc.name}"
+        }
+    )
+    
+
+@app.get("/item_exception_handler/{item_id}")
+async def watch_handler(item_id: int):
+    if item_id == 99:
+        raise UnicornException(name=item_id)
+    return {"item_id": item_id}
