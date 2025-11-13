@@ -11,7 +11,8 @@ from fastapi import (
     HTTPException,
     Request
 )
-from fastapi.responses import JSONResponse
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse, PlainTextResponse
 from typing import Optional, Literal, Union
 from pydantic import BaseModel, Field, EmailStr
 from uuid import UUID
@@ -317,4 +318,19 @@ async def exception_handler(request: Request, exc: UnicornException):
 async def watch_handler(item_id: int):
     if item_id == 99:
         raise UnicornException(name=item_id)
+    return {"item_id": item_id}
+
+
+
+
+# RequestValidationError
+@app.exception_handler(RequestValidationError)
+async def exception_handler3(request, exc):
+    return PlainTextResponse(str(exc), status_code=400)
+
+
+@app.get("/item_exception_handler2/{item_id}")
+async def unicorn_exception_handler3(item_id: int):
+    if item_id == 99:
+        raise HTTPException(status_code=418, detail="Nope! i dont like 99")
     return {"item_id": item_id}
