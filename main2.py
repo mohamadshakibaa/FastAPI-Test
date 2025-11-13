@@ -11,6 +11,7 @@ from fastapi import (
     HTTPException,
     Request
 )
+from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse, PlainTextResponse
 from typing import Optional, Literal, Union
@@ -334,3 +335,49 @@ async def unicorn_exception_handler3(item_id: int):
     if item_id == 99:
         raise HTTPException(status_code=418, detail="Nope! i dont like 99")
     return {"item_id": item_id}
+
+
+
+
+
+
+class Items4(BaseModel):
+    name: str | None = None
+    description: str | None = None
+    price: float = 30
+    tax: float = 10
+    tags: list[str] = []
+    
+items = {
+    "foo": {"name": "foo", "description": "his name is foo", "price": 51},
+    "bar": {"name": "bar", "description": "his name is bar", "tax": 60, "tags": []},
+    "baz": {"name": "baz", "description": "his name is baz", "price": 17, "tags": ['as','as']}
+}
+    
+    
+@app.get("/items_get/{item_id}", response_model=Items4)
+async def get_item(item_id: str):
+    if item_id in items:
+        return items.get(item_id)
+    raise HTTPException(status_code=418, detail="Not exist")
+
+@app.put("/items_put/{item_id}", response_model=Items4)
+async def put_item(item_id: str, item: Items4):
+    update_item_encoded = jsonable_encoder(item)
+    items[item_id] = update_item_encoded
+    return update_item_encoded
+    
+    
+@app.patch("/items_patch/{item_id}", response_model=Items4)
+def patch_item(item_id: str, item: Items4):
+    stored_item_data = items.get(item_id)
+    if stored_item_data is not None:
+        stored_item_model = Items4(**stored_item_data)
+    else:
+        stored_item_model = Items4()
+    update_data = item.dict(exclude_unset=True)
+    update_item = stored_item_model.copy(update=update_data)
+    items[item_id] = jsonable_encoder(update_item)
+    print("update_item:", update_item)
+    return update_item 
+        
