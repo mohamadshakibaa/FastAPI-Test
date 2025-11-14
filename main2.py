@@ -414,3 +414,43 @@ async def get_user(de: CommenQuery = Depends()):
     return response
 
 
+
+
+
+# Sub-Dependencies
+def query_extractor(q: str | None = None):
+    return q
+
+async def query_or_body_extrcator(
+        q: str = Depends(query_extractor),
+        last_query: str | None = Body(None)
+):
+    if not q:
+        return last_query
+    return q
+
+@app.post("/item_dependencie/")
+async def try_query(q: str = Depends(query_or_body_extrcator)):
+    return {"query_or_body": q}
+
+
+
+
+
+
+
+
+
+async def verify_token(x_token: str = Header(...)):
+    if x_token != "fake_secret_token":
+        raise HTTPException(status_code=400, detail="x-token header invalid")
+    return x_token
+    
+async def verify_key(x_key: str = Header(...)):
+    if x_key != "fake_secret_key":
+        raise HTTPException(status_code=400, detail="x-key header invalid")
+    return x_key
+
+@app.get("/get_iteme_dependencie", dependencies=[Depends(verify_key), Depends(verify_token)])
+async def get_token():
+    return [{"item_id":"foo"}, {"item_id": "baz"}]
