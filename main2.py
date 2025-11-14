@@ -1,4 +1,5 @@
 from fastapi import (
+    Depends,
     FastAPI, 
     Query, 
     Path, 
@@ -340,7 +341,7 @@ async def unicorn_exception_handler3(item_id: int):
 
 
 
-
+# Put & Patch
 class Items4(BaseModel):
     name: str | None = None
     description: str | None = None
@@ -381,3 +382,35 @@ def patch_item(item_id: str, item: Items4):
     print("update_item:", update_item)
     return update_item 
         
+        
+
+
+
+
+
+
+# Dependencies
+fake_db_items = [{"item_id": "user1"}, {"item_id": "user2"}, {"item_id": "user3"}]
+
+
+class CommenQuery:
+    def __init__(self, q: str | None = None, skip: int = 2, limit: int = 10):
+        self.q = q
+        self.skip = skip
+        self.limit = limit
+
+
+# async def get_dependencies(q: str | None = None, skip: str = 1, limit: str = 10):
+#     return {"q": q, "start": skip, "limit": limit}
+
+
+@app.get("/item_depence")
+async def get_user(de: CommenQuery = Depends()):
+    response = {}
+    if de.q:
+        response.update({"q": de.q})
+    items = fake_db_items[de.skip : de.skip + de.limit]
+    response.update({"items": items})
+    return response
+
+
