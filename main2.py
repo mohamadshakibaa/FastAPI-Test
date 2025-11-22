@@ -10,7 +10,8 @@ from fastapi import (
     File, 
     UploadFile, 
     HTTPException,
-    Request
+    Request,
+    BackgroundTasks
 )
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
@@ -454,3 +455,24 @@ async def verify_key(x_key: str = Header(...)):
 @app.get("/get_iteme_dependencie", dependencies=[Depends(verify_key), Depends(verify_token)])
 async def get_token():
     return [{"item_id":"foo"}, {"item_id": "baz"}]
+
+
+
+
+
+
+
+
+#BackgroundTasks
+import time
+def write_notification(email: str, message=""):
+    with open('log.txt', mode='w') as email_file:
+        content = f'notification fot {email}: {message}'
+        time.sleep(5)
+        email_file.write(content)
+        
+        
+@app.post("/srnd_notification/{email}", status_code=202)
+async def send_notification(email: str, background_task: BackgroundTasks):
+    background_task.add_task(write_notification, email, message='some notification')
+    return {"message": "Notification sent in the background"}
