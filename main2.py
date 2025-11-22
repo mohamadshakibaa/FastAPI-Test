@@ -22,7 +22,25 @@ from uuid import UUID
 from datetime import datetime, time, timedelta
 
 
-app = FastAPI()
+
+description = """
+My Fast-API is a big train
+
+## Users
+
+You will be able to 
+
+* **Create users**
+* **Read users**
+* **Create token**
+* **...**
+"""
+app = FastAPI(
+    title="My Fast-API :)",
+    description=description,
+    version="0.0.1",
+    
+)
 
 
 # Field just like Body and Path
