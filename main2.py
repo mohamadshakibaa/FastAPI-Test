@@ -51,7 +51,7 @@ class Item(BaseModel):
     tax: float = Field(None, description="this is tax of price")
 
 
-@app.put("/items/{item_id}")
+@app.put("/items/{item_id}", tags=["Field"])
 async def update_item(
     item_id: int = Path(..., description="hello"), item: Item = Body(...)
 ):
@@ -72,7 +72,7 @@ class Item2(BaseModel):
     tax: Optional[float] = Field(None, example=1.5)
 
 
-@app.put("/items_ex/{item_id}")
+@app.put("/items_ex/{item_id}", tags=["example"])
 async def update_item(item_id: int, item: Item2):
     result = {"item_id": item_id, "item": item}
     return result
