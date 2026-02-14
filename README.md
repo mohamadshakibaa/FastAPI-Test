@@ -1,19 +1,4 @@
-# Hi there 👋  
-I'm __Mohamad__, a passionate developer who loves coding, learning, and building cool stuff 🚀  
-- 🌱 Currently learning: Python 
----
-
-✨ "Code, Coffee, Repeat." ☕💻
-
-🚀 "Always learning, always building."
-
-🧩 "Turning ideas into reality, one commit at a time. "
-
-🎯 "Focus on progress, not perfection."
-
-🌍 "Sharing knowledge through open source."
-
-😎 "Keep it simple, keep it clean."
+Just Test
 
 <div align="center">
 
